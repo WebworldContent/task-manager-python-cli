@@ -1,32 +1,28 @@
 # Task Manager CLI (Python)
 
-A simple command-line interface (CLI) based task manager written in Python.  
-Manage your tasks (to‑dos), mark them as done, delete them, and persist them between runs via a JSON file.
-
-## Table of Contents
-
-- [Features](#features)  
-- [Requirements](#requirements)  
-- [Installation](#installation)  
-- [Usage](#usage)  
-- [File Structure](#file-structure)  
-- [Configuration & Data Storage](#configuration--data-storage)  
-- [Contributing](#contributing)  
-- [License](#license)  
-- [Future Enhancements](#future-enhancements)  
+A command-line interface (CLI) based **Task Manager with User Authentication**, written in Python.  
+Users must **register and login** before managing their own tasks.  
+All data is stored locally in a single JSON file — no database or sessions required.
 
 ## Features
 
-- Add new tasks with title and (optional) description  
-- View all tasks with status (pending / completed)  
-- Mark tasks as completed  
-- Delete tasks  
-- Persist tasks in a JSON file so data remains between runs  
+- **User Authorization**
+  - Register with a unique email and password
+  - Login with existing credentials
+  - Passwords stored securely as SHA-256 hashes
+- **Task Management**
+  - Add new tasks with title/description
+  - View tasks (pending / completed)
+  - Mark tasks as completed
+  - Delete tasks
+- **Data Persistence**
+  - All users and tasks stored in one JSON file
+  - Each user has an isolated task list
 
 ## Requirements
 
 - Python 3.6+  
-- Standard library (no external dependencies required as of now)  
+- Standard library only (no external dependencies)
 
 ## Installation
 
@@ -37,131 +33,122 @@ Manage your tasks (to‑dos), mark them as done, delete them, and persist them b
    cd task-manager-python-cli
    ```
 
-2. (Optional) Create and activate a virtual environment:
+2. (Optional) Create a virtual environment:
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate   # On Windows: venv\Scripts\activate
    ```
 
-3. (Optional) Install dependencies (if you add any later).  
-   For now, no external modules are required.
+3. Run the application:
+
+   ```bash
+   python app.py
+   ```
 
 ## Usage
 
-Run the main app script:
-
-```bash
-python app.py
-```
-
-Once running, you will see a prompt or menu to:
-
-- List tasks  
-- Add a task  
-- Mark a task as completed  
-- Delete a task  
-- Exit  
-
-### Example Session
+When you start the program:
 
 ```
-Welcome to Task Manager!
+Welcome to Task Manager CLI
 
-1. List tasks  
-2. Add task  
-3. Mark task as done  
-4. Delete task  
-5. Exit
-
-Choose an option: 2  
-Enter title: Finish report  
-Enter description (optional): Complete the monthly finances  
-
-Task added.
-
-Choose an option: 1  
-[ ] 1. Finish report — Complete the monthly finances  
-
-Choose an option: 3  
-Enter task ID to mark done: 1  
-
-Task marked as done.
-
-Choose an option: 1  
-[x] 1. Finish report — Complete the monthly finances  
-
-Choose an option: 5  
-Goodbye!
+1. Register
+2. Login
+3. Exit
 ```
+
+- **Register**: Create a new account (email + password, stored hashed)  
+- **Login**: Access your personal task list  
+- Once logged in, you will see task management options:
+
+```
+--- Task Manager ---
+1. List tasks
+2. Add task
+3. Mark task as done
+4. Delete task
+5. Logout
+```
+
+### Example
+
+```
+Choose an option: 1
+Enter email: test@gmail.com
+Enter password: ****
+User registered successfully.
+
+Choose an option: 2
+Enter email: test@gmail.com
+Enter password: ****
+Login successful!
+
+--- Task Manager ---
+1. List tasks
+2. Add task
+3. Mark task as done
+4. Delete task
+5. Logout
+```
+
+## Data Storage
+
+All data is stored in **users.json**.  
+
+Each record represents a user and contains:
+- `email` (string, unique identifier for login)  
+- `password` (SHA-256 hashed string)  
+- `task` (optional list of task objects)  
+
+### Example Structure
+
+```json
+[
+  {
+    "email": "test@gmail.com",
+    "password": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+  },
+  {
+    "email": "test2@gmail.com",
+    "password": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+    "task": [
+      {
+        "id": 0,
+        "task": "take grinder to repair",
+        "status": "pending"
+      }
+    ]
+  }
+]
+```
+
+- Passwords are securely stored as SHA-256 hashes.  
+- Each user can have zero or more tasks.  
+- Each task contains:
+  - `id` → numeric ID unique per user  
+  - `task` → the task description  
+  - `status` → `"pending"` or `"done"`  
 
 ## File Structure
 
 ```
 .
-├── app.py
-├── user_data.json
-└── README.md
+├── app.py           # Main application logic
+├── users.json       # Stores all users + tasks
+└── README.md        # Documentation
 ```
-
-- `app.py` — the main Python script implementing the CLI  
-- `user_data.json` — the JSON file used to store tasks (auto‑generated / modified)  
-- `README.md` — this documentation  
-
-## Configuration & Data Storage
-
-- Tasks are stored in **user_data.json** in JSON format.  
-- If the `user_data.json` file does not exist, the script should create it automatically.  
-- Each task record typically includes:
-  - `id` (unique integer)  
-  - `title` (string)  
-  - `description` (optional string)  
-  - `status` (e.g. `"pending"` or `"done"`)  
 
 ## Contributing
 
-Contributions are welcome! Here are some ways you could help:
+Possible improvements:
+- Use stronger password hashing (`bcrypt`) instead of raw SHA-256
+- Add task editing support
+- Add filtering and sorting (by date, priority, status)
+- Replace JSON storage with SQLite for scalability
 
-- Add command-line argument parsing (e.g. via `argparse`)  
-- Add support for due dates, priorities, categories  
-- Add task editing (change title / description)  
-- Add filtering / sorting (by status, date, etc.)  
-- Add tests (unit tests)  
-- Improve error handling and user prompts  
-- Add more persistent storage options (SQLite, YAML, etc.)
-
-If you plan to contribute:
-
-1. Fork the repo  
-2. Create a branch (e.g. `feature/new-feature`)  
-3. Commit your changes  
-4. Submit a pull request  
+Contributions are welcome!
 
 ## License
 
-Specify your license here (e.g. MIT License, Apache 2.0, etc.).  
-
-*Example:*  
-```
-MIT License
-
-Copyright (c) 2025 Your Name
-
-Permission is hereby granted, free of charge, to any person obtaining a copy …
-```
-
-## Future Enhancements
-
-- Add priority levels and deadlines  
-- Allow editing of existing tasks  
-- Use a more robust storage backend (e.g. SQLite)  
-- Add synchronization or backup options  
-- Improve the CLI interface (colorful output, better menus)  
-- Add search or filter commands  
-- Add undo / redo support  
-
----
-
-Thanks for checking out **Task Manager CLI (Python)**!  
-Feel free to use, modify, or extend it as much as you like.  
-If you add features, don’t forget to update this README accordingly.  
+MIT License (or specify your license here).
